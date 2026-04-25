@@ -169,7 +169,7 @@ function InterviewRoom({ config, onComplete }) {
         setInterviewId(id);
         interviewIdRef.current = id;
         setMessages([{ role: 'interviewer', content: msg }]);
-        if (config.mode === 'voice' && speechSupported) {
+        if (speechSupported) {
           setStatus('speaking');
           speakWithFallback(msg, () => setStatus('waiting'));
         } else {
@@ -205,9 +205,9 @@ function InterviewRoom({ config, onComplete }) {
         setStatus('complete');
         clearInterval(timerRef.current);
         if (speechFallbackRef.current) clearTimeout(speechFallbackRef.current);
-        if (config.mode === 'voice' && speechSupported) speakWithFallback(aiMsg, () => {});
+        if (speechSupported) speakWithFallback(aiMsg, () => {});
       } else {
-        if (config.mode === 'voice' && speechSupported) {
+        if (speechSupported) {
           setStatus('speaking');
           speakWithFallback(aiMsg, () => setStatus('waiting'));
         } else {
@@ -236,8 +236,8 @@ function InterviewRoom({ config, onComplete }) {
       // ── STOP: send captured speech ──
       stopListening();
       setTimeout(() => {
-        // ✅ Read from ref — guaranteed latest, no stale closure
-        const text = ((finalTextRef.current || '') + ' ' + (interimTextRef.current || '')).trim();
+        // ✅ Read from ref — guaranteed latest, no stale closure (added optional chaining for fast-refresh)
+        const text = ((finalTextRef?.current || '') + ' ' + (interimTextRef?.current || '')).trim();
         console.log('📤 Voice answer:', `"${text}"`);
         if (text) {
           sendAnswer(text);
