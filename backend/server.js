@@ -67,7 +67,7 @@ mongoose.connect(process.env.MONGODB_URI)
     const { seedQuestions } = require('./utils/seed');
     await seedQuestions();
     app.listen(process.env.PORT || 5000, () => {
-      console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);
+      console.log(` Server running on port ${process.env.PORT || 5000}`);
     });
   })
   .catch(err => {
