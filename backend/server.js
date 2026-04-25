@@ -18,7 +18,11 @@ const app = express();
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'https://aural-ai-xiue.onrender.com', 
+    'http://localhost:3000', 
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
