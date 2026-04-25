@@ -19,8 +19,8 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors({
   origin: [
-    'https://aural-ai-xiue.onrender.com', 
-    'http://localhost:3000', 
+    'https://aural-ai-xiue.onrender.com',
+    'http://localhost:3000',
     process.env.FRONTEND_URL
   ].filter(Boolean),
   credentials: true
