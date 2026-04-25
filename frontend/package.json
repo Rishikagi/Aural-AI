@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build"
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' CI=false react-scripts build"
   },
   "proxy": "https://aural-ai.onrender.com",
   "browserslist": {
