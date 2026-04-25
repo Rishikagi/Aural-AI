@@ -99,7 +99,7 @@ function InterviewRoom({ config, onComplete }) {
     isListening, isSpeaking, transcript, interimTranscript,
     speechSupported, speak, stopSpeaking,
     startListening, stopListening, resetTranscript,
-    finalTextRef,   // ✅ direct ref — never stale
+    finalTextRef, interimTextRef,   // ✅ direct refs — never stale
   } = useVoiceInterview();
 
   const navigate = useNavigate();
@@ -237,7 +237,7 @@ function InterviewRoom({ config, onComplete }) {
       stopListening();
       setTimeout(() => {
         // ✅ Read from ref — guaranteed latest, no stale closure
-        const text = (finalTextRef.current || '').trim();
+        const text = ((finalTextRef.current || '') + ' ' + (interimTextRef.current || '')).trim();
         console.log('📤 Voice answer:', `"${text}"`);
         if (text) {
           sendAnswer(text);
@@ -257,7 +257,7 @@ function InterviewRoom({ config, onComplete }) {
       startListening();
     }
   }, [
-    isListening, isSpeaking, finalTextRef,
+    isListening, isSpeaking, finalTextRef, interimTextRef,
     stopSpeaking, stopListening, startListening,
     resetTranscript, sendAnswer,
   ]);

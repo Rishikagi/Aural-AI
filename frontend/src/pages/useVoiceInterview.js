@@ -14,6 +14,7 @@ export function useVoiceInterview() {
   const synthRef = useRef(null);
   const isListeningRef = useRef(false);
   const finalTextRef = useRef('');   // ✅ always holds latest transcript — never stale
+  const interimTextRef = useRef(''); // ✅ holds interim un-finalized text
 
   useEffect(() => {
     // ── Speech Recognition ────────────────────────────────
@@ -49,11 +50,10 @@ export function useVoiceInterview() {
           finalTextRef.current += newFinal;          // ✅ update ref immediately
           setTranscript(finalTextRef.current);       // also update state for display
         }
+        interimTextRef.current = interim; // ✅ save interim so we don't lose it if stopped early
         setInterimTranscript(interim);
-
-        // Mirror into the text input so it shows live
-        const inputEl = document.getElementById('iv-text-input');
-        if (inputEl) inputEl.value = finalTextRef.current + interim;
+        
+        // Removed DOM mutation of iv-text-input to prevent React control fight
       };
 
       recognition.onerror = (event) => {
@@ -198,5 +198,6 @@ export function useVoiceInterview() {
     stopListening,
     resetTranscript,
     finalTextRef,    // ✅ exposed so VoiceInterview.js can read it directly
+    interimTextRef,  // ✅ exposed to read incomplete unfinalized voice input
   };
 }
