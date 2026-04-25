@@ -1,0 +1,16 @@
+{
+  "name": "interview-prep",
+  "version": "1.0.0",
+  "description": "A full-stack MERN application for realistic technical interview preparation with **live voice AI interviews**, real company questions, and detailed feedback.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
