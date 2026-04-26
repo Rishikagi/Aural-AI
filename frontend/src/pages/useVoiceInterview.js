@@ -111,6 +111,7 @@ export function useVoiceInterview() {
   const speak = useCallback((text, onEnd) => {
     if (!synthRef.current || !text) { if (onEnd) onEnd(); return; }
 
+    window.speechSynthesis.resume();
     synthRef.current.cancel();
 
     // Clean markdown/symbols for natural speech
@@ -125,7 +126,9 @@ export function useVoiceInterview() {
       .trim();
 
     const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.voice = selectedVoice;
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
     utterance.rate = 0.92;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
@@ -163,6 +166,7 @@ export function useVoiceInterview() {
     setTranscript('');
     setInterimTranscript('');
     isListeningRef.current = true;
+    setIsListening(true);
     try { recognitionRef.current.start(); } catch (e) { console.warn('Start error:', e); }
   }, []);
 
@@ -170,6 +174,7 @@ export function useVoiceInterview() {
   const stopListening = useCallback(() => {
     if (!recognitionRef.current) return;
     isListeningRef.current = false;     // prevent auto-restart in onend
+    setIsListening(false);
     try { recognitionRef.current.stop(); } catch (e) { console.warn('Stop error:', e); }
   }, []);
 

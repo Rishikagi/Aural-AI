@@ -234,21 +234,20 @@ function InterviewRoom({ config, onComplete }) {
 
     if (isListening) {
       // ── STOP: send captured speech ──
+      // Grab text synchronously BEFORE stopping to guarantee we don't lose interim results
+      const text = ((finalTextRef?.current || '') + ' ' + (interimTextRef?.current || '')).trim();
+      
       stopListening();
-      setTimeout(() => {
-        // ✅ Read from ref — guaranteed latest, no stale closure (added optional chaining for fast-refresh)
-        const text = ((finalTextRef?.current || '') + ' ' + (interimTextRef?.current || '')).trim();
-        console.log('📤 Voice answer:', `"${text}"`);
-        if (text) {
-          sendAnswer(text);
-          resetTranscript();
-          setInputText('');
-        } else {
-          setStatus('waiting');
-          setError('Nothing captured. Click the mic, speak clearly, then click ■ stop.');
-          setTimeout(() => setError(''), 3500);
-        }
-      }, 900); // 900ms lets recognition finalize last word
+      
+      if (text) {
+        sendAnswer(text);
+        resetTranscript();
+        setInputText('');
+      } else {
+        setStatus('waiting');
+        setError('Nothing captured. Click the mic, speak clearly, then click ■ stop.');
+        setTimeout(() => setError(''), 3500);
+      }
     } else {
       // ── START: begin recording ──
       setStatus('listening');
@@ -446,7 +445,16 @@ export default function VoiceInterview() {
   const [config, setConfig] = useState(null);
   const navigate = useNavigate();
 
-  const handleStart = (cfg) => { setConfig(cfg); setPhase('interview'); };
+  const handleStart = (cfg) => {
+    // Prime the speech synthesis engine on user click to bypass autoplay restrictions
+    if (window.speechSynthesis) {
+      window.speechSynthesis.resume();
+      const primeUtterance = new SpeechSynthesisUtterance(' ');
+      window.speechSynthesis.speak(primeUtterance);
+    }
+    setConfig(cfg); 
+    setPhase('interview'); 
+  };
   const handleComplete = (interviewId) => {
     if (interviewId) navigate(`/result/${interviewId}`);
     else navigate('/history');
